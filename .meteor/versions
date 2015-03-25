@@ -27,6 +27,7 @@ iron:location@1.0.7
 iron:middleware-stack@1.0.7
 iron:router@1.0.7
 iron:url@1.0.7
+isaac:x@0.0.1
 jquery@1.11.3_2
 json@1.0.3
 launch-screen@1.0.2
@@ -73,4 +74,3 @@ underscore@1.0.3
 url@1.0.4
 webapp@1.2.0
 webapp-hashing@1.0.3
-x@0.0.0
