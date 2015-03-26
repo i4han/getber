@@ -1,15 +1,15 @@
 #login-buttons {
   float: right;
-  border: 0;
+  border: 0px;
 }
 #login-buttons + li .dropdown-menu {
   float: right;
-  right: 0;
+  right: 0px;
   left: auto;
 }
 
 #logged-in-dropdown-menu {
-  right: 0;
+  right: 0px;
   left: auto;
   width: 190px;
   padding: 5px 0px;

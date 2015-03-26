@@ -30,7 +30,7 @@ iron:url@1.0.7
 isaac:masonry@0.0.1
 isaac:moment@0.0.1
 isaac:scrollspy@0.0.1
-isaac:x@0.0.10
+isaac:x@0.0.13
 jquery@1.11.3_2
 json@1.0.3
 launch-screen@1.0.2

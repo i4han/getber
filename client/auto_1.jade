@@ -8,12 +8,18 @@ template(name="layout")
         +yield
 
 template(name="home")
-    #content-wrapper
-        h2 Sign up with UBER
+    #contentWrapper
+        h2#title Sign up with UBER
+        .col-md-6
+            p#name Isaac Han
+            p#address 2353 Hagen Link NW, Edmonton, AB T6R 0B2
+            br
+            with uber
+                +button
         .col-md-5
             a(class="btn-info", href="https://login.uber.com/oauth/authorize?scope=request%20profile%20history_lite&amp;client_id=xJsIAYCmEZElqHVLKJyPxVNcXUXqwE_q&amp;redirect_uri=https%3A%2F%2Fwww.getber.com%2Fsubmit&amp;response_type=token") Connect with Uber
-        .row#items
-            .col-md-12#pack
+        #items
+            .col-md-11#pack
                 each items
                     +item
 
@@ -25,7 +31,7 @@ template(name="item")
     .item(style='height:{{height}}px;color:{{color}}')
 
 template(name="vehicle")
-    #content-wrapper
+    #contentWrapper
         h1 You vehicle information
         br
         .col-sm-7
@@ -53,8 +59,8 @@ template(name="map")
     #map-canvas
 
 template(name="calendar")
-    #content-wrapper
-        #container-calendar
+    #contentWrapper
+        #containerCalendar
             .scrollspy#top &nbsp;
             #items
             .scrollspy#bottom &nbsp;
@@ -83,7 +89,7 @@ template(name="day")
     .event {{event}}
 
 template(name="request")
-    #content-wrapper
+    #contentWrapper
         h1 Request a Mek
         br
         .col-sm-7
@@ -94,7 +100,7 @@ template(name="request")
 template(name="popover_name")
     ul
         li Write your name.
-        li  No longer then 12 letters.
+        li No longer then 12 letters.
 
 template(name="popover_phone")
     ul
@@ -105,7 +111,7 @@ template(name="popover_address")
         li Write your zipcode.
 
 template(name="help")
-    #content-wrapper
+    #contentWrapper
         h1 Help
 
 template(name="login")
@@ -113,10 +119,11 @@ template(name="login")
         +Template.dynamic(template=template)
 
 template(name="dropdown_logged_in")
-    li.dropdown#login-dropdown 
-        a.dropdown-toggle#login-id(data-toggle='dropdown') {{username}}
-            i.fa(class='fa-chevron-down') 
-        .dropdown-menu(id='{{id}}')
+    li.dropdown#login-dropdown
+        a.dropdown-toggle#login-id(data-toggle="dropdown")
+            {{username}}
+            i.fa(class="fa-chevron-down")
+        .dropdown-menu(id="{{id}}")
             +Template.dynamic(template=template)
 
 template(name="dropdown_menu_logged_in")
@@ -127,12 +134,12 @@ template(name="change_password")
     each fields
         +form
     br
-    +login_messages 
-    #dropdown-menu-buttons   
+    +login_messages
+    #dropdown-menu-buttons
         each buttons
-            +button 
+            +button
     #dropdown-other-options
-        each links  
+        each links
             +a
 
 template(name="dropdown_logged_out")
@@ -153,11 +160,12 @@ template(name="dropdown_logged_out")
                     +a
 
 template(name="login_messages")
-    +alert(class='alert-danger'  message=error_message)
-    +alert(class='alert-success' message=info_message )
+    +alert(class="alert-danger"  message=error_message)
+    +alert(class="alert-success" message=info_message )
 
 template(name="menu_list")
-    li: a(href="{{path}}" id="{{id}}") {{label}}
+    li
+        a(href="{{path}}" id="{{id}}") {{label}}
 
 template(name="navbar")
     .navbar.navbar-default.navbar-fixed-top

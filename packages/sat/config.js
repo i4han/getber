@@ -255,149 +255,90 @@ this.Config = {
   }
 }.init();
 
-this.__ = {
-  queryString: function(obj) {
-    var i, parts;
-    parts = [];
-    for (i in obj) {
-      parts.push(encodeURIComponent(i) + "=" + encodeURIComponent(obj[i]));
-    }
-    return parts.join("&");
-  },
-  trim: function(str) {
-    if (str != null) {
-      return str.trim();
-    } else {
-      return null;
-    }
-  },
-  capitalize: function(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  },
-  dasherize: function(str) {
-    return str.trim().replace(/([A-Z])/g, "-$1").replace(/[-_\s]+/g, "-").toLowerCase();
-  },
-  prettyJSON: function(obj) {
-    return JSON.stringify(obj, null, 4);
-  },
-  getValue: function(id) {
-    var element;
-    element = document.getElementById(id);
-    if (element) {
-      return element.value;
-    } else {
-      return null;
-    }
-  },
-  trimmedValue: function(id) {
-    var element;
-    element = document.getElementById(id);
-    if (element) {
-      return element.value.replace(/^\s*|\s*$/g, "");
-    } else {
-      return null;
-    }
-  },
-  reKey: function(obj, oldName, newName) {
-    if (obj.hasOwnProperty(oldName)) {
-      obj[newName] = obj[oldName];
-      delete obj[oldName];
-    }
-    return this;
-  }
-};
+(typeof Meteor === "undefined" || Meteor === null) && (module.exports = {
+  __: this.__,
+  Config: this.Config
+});
 
-this.__.slice = function(str, tab, indent) {
-  if (tab == null) {
-    tab = 1;
-  }
-  if (indent == null) {
-    indent = '    ';
-  }
-  return (((str.replace(/~\s+/g, '')).split('|')).map(function(s) {
-    return s = 0 === s.search(/^(<+)/) ? s.replace(/^(<+)/, Array(tab = Math.max(tab - RegExp.$1.length, 1)).join(indent)) : 0 === s.search(/^>/) ? s.replace(/^>/, Array(++tab).join(indent)) : s.replace(/^/, Array(tab).join(indent));
-  })).join('\n');
-};
 
-this.__.insertTemplate = function(page, id, data) {
-  if (data == null) {
-    data = {};
-  }
-  $('#' + id).empty();
-  return Blaze.renderWithData(Template[page], Object.keys(data).length ? data : Template[page].helpers, document.getElementById(id));
-};
+/*
 
-this.__.currentRoute = function() {
-  return Router.current().route.getName();
-};
+@__.slice = (str, tab=1, indent='    ') -> (((str.replace /~\s+/g, '').split '|').map (s) ->
+    s = if 0 == s.search /^(<+)/ then s.replace /^(<+)/, Array(tab = Math.max tab - RegExp.$1.length, 1).join indent 
+    else if 0 == s.search /^>/ then s.replace /^>/, Array(++tab).join indent 
+    else s.replace /^/, Array(tab).join indent).join '\n'
 
-this.__.render = function(page) {
-  return Template[page].renderFunction().value;
-};
 
-this.__.renameKeys = function(obj, keyObject) {
-  return _.each(_.keys(keyObject, function(key) {
-    return this.__.reKey(obj, key, keyObject[key]);
-  }));
-};
+@__ =
+    queryString: (obj) ->
+        parts = []
+        for i of obj
+            parts.push encodeURIComponent(i) + "=" + encodeURIComponent(obj[i])
+        parts.join "&"
 
-this.__.repeat = function(pattern, count) {
-  var result;
-  if (count < 1) {
-    return '';
-  }
-  result = '';
-  while (count > 0) {
-    if (count & 1) {
-      result += pattern;
-    }
-    count >>= 1;
-    pattern += pattern;
-  }
-  return result;
-};
+    trim: (str) -> if str? then str.trim() else null
+    capitalize: (string) -> string.charAt(0).toUpperCase() + string.slice(1)
+    dasherize: (str) -> str.trim().replace(/([A-Z])/g, "-$1").replace(/[-_\s]+/g, "-").toLowerCase()
+    prettyJSON: (obj) -> JSON.stringify obj, null, 4
+    getValue: (id) ->
+        element = document.getElementById(id)
+        if element then element.value else null
+    trimmedValue: (id) ->
+        element = document.getElementById(id)
+        if element then element.value.replace(/^\s*|\s*$/g, "") else null
+    reKey: (obj, oldName, newName) ->
+        if obj.hasOwnProperty(oldName)
+            obj[newName] = obj[oldName]
+            delete obj[oldName]
+        this
 
-this.__.deepExtend = function(target, source) {
-  var prop;
-  for (prop in source) {
-    if (prop in target) {
-      this.__.deepExtend(target[prop], source[prop]);
-    } else {
-      target[prop] = source[prop];
-    }
-  }
-  return target;
-};
 
-this.__.flatten = function(obj, chained_keys) {
-  var flatObject, i, j, toReturn, _i, _j, _len, _len1;
-  toReturn = {};
-  for (_i = 0, _len = obj.length; _i < _len; _i++) {
-    i = obj[_i];
-    if (typeof obj[i] === 'object') {
-      flatObject = this.__.flatten(obj[i]);
-      for (_j = 0, _len1 = flatObject.length; _j < _len1; _j++) {
-        j = flatObject[_j];
-        if (chained_keys) {
-          toReturn[i + '_' + j] = flatObject[j];
-        } else {
-          toReturn[j] = flatObject[j];
-        }
-      }
-    } else {
-      toReturn[i] = obj[i];
-    }
-  }
-  return toReturn;
-};
+@__.insertTemplate = (page, id, data={}) ->
+    $('#' + id).empty()
+    Blaze.renderWithData(
+        Template[page], 
+        if Object.keys(data).length then data else Template[page].helpers 
+        document.getElementById id  )
 
-this.__.log = function(arg) {
-  return console.log(arg + '');
-};
+@__.currentRoute = -> Router.current().route.getName()
 
-if (typeof Meteor === "undefined" || Meteor === null) {
-  module.exports = {
-    __: this.__,
-    Config: this.Config
-  };
-}
+@__.render = (page) -> Template[page].renderFunction().value
+
+@__.renameKeys = (obj, keyObject) ->
+    _.each _.keys keyObject, (key) -> @__.reKey obj, key, keyObject[key]
+
+@__.repeat = (pattern, count) ->
+    return '' if count < 1
+    result = ''
+    while count > 0
+        result += pattern if count & 1
+        count >>= 1
+        pattern += pattern
+    result
+
+@__.deepExtend = (target, source) ->
+    for prop of source
+        if prop of target
+            @__.deepExtend target[prop], source[prop]
+        else
+            target[prop] = source[prop]
+    target
+
+
+@__.flatten = (obj, chained_keys) ->
+    toReturn = {}       
+    for i in obj
+        if typeof obj[i] == 'object'
+            flatObject = @__.flatten obj[i]
+            for j in flatObject
+                if chained_keys
+                    toReturn[i+'_'+j] = flatObject[j]
+                else
+                    toReturn[j] = flatObject[j]
+        else
+            toReturn[i] = obj[i]
+    toReturn
+
+@__.log = (arg) ->
+     console.log( arg + '' );
+ */

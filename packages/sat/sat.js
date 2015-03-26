@@ -66,9 +66,73 @@ db_init = function () {
 
 
 if ( Meteor.isClient ) {
-    $( function () { 
+    $( function ($) { 
         if ( ! Sat.isClient ) 
-            Sat.init(); 
+            Sat.init();
+
+        $.fn.getStyle = function(){
+            var dom = this.get(0);
+            var style;
+            var returns = {};
+            if(window.getComputedStyle){
+                var camelize = function(a,b){
+                    return b.toUpperCase();
+                };
+                style = window.getComputedStyle(dom, null);
+                for(var i = 0, l = style.length; i < l; i++){
+                    var prop = style[i];
+                    var camel = prop.replace(/\-([a-z])/g, camelize);
+                    var val = style.getPropertyValue(prop);
+                    returns[camel] = val;
+                };
+                return returns;
+            };
+            if(style = dom.currentStyle){
+                for(var prop in style){
+                    returns[prop] = style[prop];
+                };
+                return returns;
+            };
+            return this.css();
+        }
+        $.fn.copyStyle = function(source){
+          var styles = source.getStyle();
+          this.css(styles);
+        }
+        $.fn.extend({
+            editable: function() {
+                var that = this,
+                    $inputBox = $('<input type="text"></input>').css('min-width', that.width()),
+                    submitChanges = function() {
+                        that.html($inputBox.val());
+                        that.show();
+                        that.trigger('editsubmit', [that.html()]);
+                        $(document).unbind('click', submitChanges);
+                        $inputBox.detach();
+                    },
+                    tempVal;
+                $inputBox.copyStyle( that );
+                $inputBox.css( {'border-bottom':'2px solid black'});
+                $inputBox.click(function(event) {
+                    event.stopPropagation();
+                });
+
+                that.dblclick(function(e) {
+                    tempVal = that.html();
+                    $inputBox.val(tempVal).insertBefore(that).bind('keypress', function(e) {
+                        if ($(this).val() !== '') {
+                            var code = (e.keyCode ? e.keyCode : e.which);
+                            if (code == 13) {
+                                submitChanges();
+                            }
+                        }
+                    });
+                    that.hide();
+                    $(document).click(submitChanges);
+                });
+                return that;
+            }
+        });
     });
 } else if ( Meteor.isServer ) {
     Meteor.startup( function() {
@@ -147,3 +211,6 @@ Sat.init = function () {
     }
 }
 
+if ('undefined' !== typeof $) {
+
+}
