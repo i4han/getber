@@ -14,10 +14,8 @@ iron:router
 mquandalle:jade
 mizzao:bootstrap-3
 fortawesome:fontawesome
-masonry
-scrollspy
-momentjs:moment
 oauth
 oauth2
 http
-isaac:x
+isaac:x@0.0.10
+isaac:scrollspy
