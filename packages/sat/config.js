@@ -103,7 +103,7 @@ local = {
   index_file: 'index',
   other_files: [],
   modules: 'accounts menu ui responsive'.split(' '),
-  collections: 'Connects Items Updates Calendar'.split(' '),
+  collections: 'Connects Items Updates Calendar User'.split(' '),
   theme: 'clean'
 };
 
