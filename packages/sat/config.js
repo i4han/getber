@@ -104,7 +104,13 @@ local = {
   other_files: [],
   modules: 'accounts menu ui responsive'.split(' '),
   collections: 'Connects Items Updates Calendar User'.split(' '),
-  theme: 'clean'
+  theme: 'clean',
+  uber_oauth: {
+    scope: 'request profile history_lite',
+    client_id: 'xJsIAYCmEZElqHVLKJyPxVNcXUXqwE_q',
+    redirect_uri: 'https://www.getber.com/submit',
+    response_type: 'token'
+  }
 };
 
 if (main == null) {
@@ -119,6 +125,7 @@ this.Config = {
   local_config: main.local_config,
   collections: local.collections,
   menu: local.menu,
+  local: local,
   _: {
     font_style: {
       pt_sans: "https://fonts.googleapis.com/css?family=PT+Sans:400,700"
