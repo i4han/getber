@@ -1,5 +1,9 @@
 
-Package.describe({ summary: 'Satellite framework for Meteor.' });
+Package.describe({
+    summary: 'Satellite framework for Meteor.',
+    version: "0.0.1",
+    documentation: null
+});
 
 Package.on_use( function (api) {
     api.use('underscore');
@@ -7,9 +11,9 @@ Package.on_use( function (api) {
     api.use('isaac:masonry');
     api.use('isaac:moment');
     api.use('isaac:x');
-    api.add_files( 'config.js', ['client', 'server'] );
-    api.add_files( 'sat.js',    ['client', 'server'] );
-//    api.add_files( 'callback.js',     'server' );
+    api.add_files( 'config.js',     ['client', 'server'] );
+    api.add_files( 'sat.coffee.js', ['client', 'server'] );
+    api.add_files( 'sat.js',        ['client', 'server'] );
 
     api.export( '__',      ['client', 'server'] );    
     api.export( 'db',      ['client', 'server'] );
