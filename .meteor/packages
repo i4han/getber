@@ -9,7 +9,6 @@ stylus
 accounts-password
 jquery
 underscore
-sat
 iron:router
 mquandalle:jade
 mizzao:bootstrap-3
@@ -17,5 +16,4 @@ fortawesome:fontawesome
 oauth
 oauth2
 http
-isaac:x@0.1.4
-isaac:scrollspy
+sat

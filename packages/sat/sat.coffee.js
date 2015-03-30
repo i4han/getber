@@ -1,32 +1,38 @@
-db.init = function() {
-  return Config.collections.map(function(c) {
-    db[c] = new Meteor.Collection(c);
-    if (Meteor.isServer) {
-      db[c].allow({
-        insert: function(doc) {
-          return true;
-        },
-        update: function(userId, doc, fields, modifier) {
-          return true;
-        },
-        remove: function(userId, doc) {
-          return true;
-        }
-      });
-      db[c].deny({
-        update: function(userId, doc, fields, modifier) {
-          return false;
-        },
-        remove: function(userId, doc) {
-          return false;
-        }
-      });
-      return Meteor.publish(c, function() {
-        return db[c].find({});
-      });
-    } else if (Meteor.isClient) {
-      return Meteor.subscribe(c);
-    }
+var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+db.server = function() {
+  return Settings.collections.map(function(collection) {
+    console.log(collection);
+    db[collection] = new Meteor.Collection(collection);
+    db[collection].allow({
+      insert: function(doc) {
+        return true;
+      },
+      update: function(userId, doc, fields, modifier) {
+        return true;
+      },
+      remove: function(userId, doc) {
+        return true;
+      }
+    });
+    db[collection].deny({
+      update: function(userId, doc, fields, modifier) {
+        return false;
+      },
+      remove: function(userId, doc) {
+        return false;
+      }
+    });
+    return Meteor.publish(collection, function() {
+      return db[collection].find({});
+    });
+  });
+};
+
+db.client = function() {
+  return Settings.collections.map(function(collection) {
+    db[collection] = new Meteor.Collection(collection);
+    return Meteor.subscribe(collection);
   });
 };
 
@@ -52,14 +58,33 @@ Pages.init = function() {
 };
 
 Sat.init = function() {
-  var router_map, startup;
-  db.init();
+  var methods, router_map, startup;
   Pages.init();
   if (Meteor.isServer) {
-    Sat.isServer = true;
-    return Meteor.methods({});
+    x.extend(Settings, Meteor.settings);
+    Settings.isServer = true;
+    db.server();
+    methods = {};
+    (x.keys(Pages)).map(function(name) {
+      return (x.keys(Pages[name])).map(function(key) {
+        var k, v, _ref, _results;
+        if ('methods' === key) {
+          _ref = Pages[name][key];
+          _results = [];
+          for (k in _ref) {
+            v = _ref[k];
+            _results.push(methods[k] = v);
+          }
+          return _results;
+        }
+      });
+    });
+    Meteor.methods(methods);
+    return console.log(Settings);
   } else if (Meteor.isClient) {
-    Sat.isClient = true;
+    x.extend(Settings, Session.get('Settings'));
+    Settings.isClient = true;
+    db.client();
     Router.configure({
       layoutTemplate: 'layout'
     });
@@ -67,18 +92,16 @@ Sat.init = function() {
     router_map = {};
     (x.keys(Pages)).map(function(name) {
       return (x.keys(Pages[name])).map(function(key) {
-        if ('helpers' === key) {
-          return Template[name].helpers(Pages[name].helpers);
-        } else if ('events' === key) {
+        if ('events' === key) {
           return Template[name].events(x.func(Pages[name].events));
         } else if ('router' === key) {
           return router_map[name] = Pages[name].router;
         } else if ('startup' === key) {
           return startup.push(Pages[name].startup);
-        } else if ((Config.templates.concat('eco navbar'.split(' '))).indexOf(key === -1)) {
+        } else if (__indexOf.call(Config.templates.concat('eco navbar'.split(' ')), key) >= 0) {
           return '';
-        } else if (('rendered created destroyed'.split(' ')).indexOf(key === -1)) {
-          return (Template[name] != null) && (Template[name][key] = Pages[name][key]);
+        } else if (__indexOf.call('helpers onRendered onCreated onDestroyed'.split(' '), key) >= 0) {
+          return Template[name][key](Pages[name][key]);
         }
       });
     });
@@ -97,3 +120,33 @@ Sat.init = function() {
     });
   }
 };
+
+if (Meteor.isClient) {
+  $(function($) {
+    var k, _results;
+    Settings.isClient || Sat.init();
+    _results = [];
+    for (k in x.$) {
+      _results.push($.fn[k] = x.$[k]);
+    }
+    return _results;
+  });
+} else if (Meteor.isServer) {
+  Meteor.startup(function() {
+    return Settings.isServer || Sat.init();
+  });
+}
+
+
+/*
+if (Meteor.isClient) {
+    $( function ($) { 
+        Settings.isClient || Sat.init();
+        for (key in x) {
+            $.fn[key] = x.$[key]
+        }
+    });
+} else if (Meteor.isServer) {
+    Meteor.startup(function() { Settings.isServer || Sat.init(); });
+}
+ */
