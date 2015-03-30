@@ -98,7 +98,7 @@ Sat.init = function() {
           return router_map[name] = Pages[name].router;
         } else if ('startup' === key) {
           return startup.push(Pages[name].startup);
-        } else if (__indexOf.call(Config.templates.concat('eco navbar'.split(' ')), key) >= 0) {
+        } else if (__indexOf.call('eco navbar'.split(' '), key) >= 0) {
           return '';
         } else if (__indexOf.call('helpers onRendered onCreated onDestroyed'.split(' '), key) >= 0) {
           return Template[name][key](Pages[name][key]);

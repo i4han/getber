@@ -49,7 +49,7 @@ Sat.init = ->
                 router_map[name] = Pages[name].router
             else if 'startup' == key
                 startup.push Pages[name].startup
-            else if key in Config.templates.concat 'eco navbar'.split ' '
+            else if key in 'eco navbar'.split ' ' # Config.templates.concat 
                 ''
             else if key in 'helpers onRendered onCreated onDestroyed'.split ' '
                 Template[name][key] Pages[name][key]
