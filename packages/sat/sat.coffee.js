@@ -1,7 +1,7 @@
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 db.server = function() {
-  return Settings.collections.map(function(collection) {
+  return Meteor.settings["public"].collections.map(function(collection) {
     console.log(collection);
     db[collection] = new Meteor.Collection(collection);
     db[collection].allow({
@@ -30,7 +30,7 @@ db.server = function() {
 };
 
 db.client = function() {
-  return Settings.collections.map(function(collection) {
+  return Meteor.settings["public"].collections.map(function(collection) {
     db[collection] = new Meteor.Collection(collection);
     return Meteor.subscribe(collection);
   });
@@ -61,8 +61,6 @@ Sat.init = function() {
   var methods, router_map, startup;
   Pages.init();
   if (Meteor.isServer) {
-    x.extend(Settings, Meteor.settings);
-    Settings.isServer = true;
     db.server();
     methods = {};
     (x.keys(Pages)).map(function(name) {
@@ -79,11 +77,8 @@ Sat.init = function() {
         }
       });
     });
-    Meteor.methods(methods);
-    return console.log(Settings);
+    return Meteor.methods(methods);
   } else if (Meteor.isClient) {
-    x.extend(Settings, Session.get('Settings'));
-    Settings.isClient = true;
     db.client();
     Router.configure({
       layoutTemplate: 'layout'
@@ -124,7 +119,7 @@ Sat.init = function() {
 if (Meteor.isClient) {
   $(function($) {
     var k, _results;
-    Settings.isClient || Sat.init();
+    Sat.init();
     _results = [];
     for (k in x.$) {
       _results.push($.fn[k] = x.$[k]);
@@ -133,7 +128,7 @@ if (Meteor.isClient) {
   });
 } else if (Meteor.isServer) {
   Meteor.startup(function() {
-    return Settings.isServer || Sat.init();
+    return Sat.init();
   });
 }
 

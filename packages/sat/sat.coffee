@@ -1,6 +1,6 @@
 
 db.server = ->
-    Settings.collections.map (collection) ->
+    Meteor.settings.public.collections.map (collection) ->
         console.log collection
         db[collection] = new Meteor.Collection collection
         db[collection].allow
@@ -13,7 +13,7 @@ db.server = ->
         Meteor.publish collection, -> db[collection].find {}
 
 db.client = ->
-    Settings.collections.map (collection) ->
+    Meteor.settings.public.collections.map (collection) ->
         db[collection] = new Meteor.Collection collection
         Meteor.subscribe collection
 
@@ -25,19 +25,14 @@ Pages.init = ->
         (( x.keys pagesInFile[file] ).filter (key) -> key[0..1] == '__').map (name) -> delete Pages[name]
 
 Sat.init = ->
-    Pages.init() 
+    Pages.init()
     if Meteor.isServer
-        x.extend Settings, Meteor.settings
-        Settings.isServer = true
         db.server()
         methods = {}
         (x.keys Pages).map (name) -> (x.keys Pages[name]).map (key) ->  
             methods[k] = v for k, v of Pages[name][key] if 'methods' == key
         Meteor.methods methods
-        console.log Settings
     else if Meteor.isClient
-        x.extend Settings, Session.get 'Settings'
-        Settings.isClient = true
         db.client()
         Router.configure layoutTemplate: 'layout'
         startup = []
@@ -59,10 +54,10 @@ Sat.init = ->
 
 if Meteor.isClient
     $ ($) -> 
-        Settings.isClient or Sat.init()
+        Sat.init()
         $.fn[k] = x.$[k] for k of x.$
 else if Meteor.isServer
-    Meteor.startup -> Settings.isServer or Sat.init()
+    Meteor.startup -> Sat.init()
 
 ###
 if (Meteor.isClient) {

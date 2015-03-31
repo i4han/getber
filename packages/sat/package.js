@@ -1,7 +1,7 @@
 
 Package.describe({
     summary: 'Satellite framework for Meteor.',
-    version: "0.0.4",
+    version: "0.0.9",
     documentation: null
 });
 
@@ -10,7 +10,7 @@ Package.on_use( function (api) {
     api.use('jquery');
     api.use('isaac:masonry');
     api.use('isaac:moment');
-    api.use('isaac:x@0.1.28');
+    api.use('isaac:x@0.1.29');
     api.add_files( 'config.js',     ['client', 'server'] );
     api.add_files( 'sat.coffee.js', ['client', 'server'] );
     api.add_files( 'sat.js',        ['client', 'server'] );
