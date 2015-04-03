@@ -62,12 +62,16 @@ template(name="popover_color")
     ul
         li White or black only
 
-template(name="sidebar_map")
+template(name="sidebar_vehicle")
     each items
         +menu_list
 
 template(name="map")
     #map-canvas
+
+template(name="sidebar_map")
+    each items
+        +menu_list
 
 template(name="calendar")
     #contentWrapper
@@ -97,12 +101,17 @@ template(name="day")
 
 template(name="request")
     #contentWrapper
-        h1 Request a Mek
+        h1 Request
         br
-        .col-sm-7
+        .col-sm-9#e11
             each items
                 +form
                 br
+        .col-sm-9#e12
+            input(type="tel",id="mobile-number",class="form-control")
+            br
+        .col-sm-9#e13
+            +gmap
 
 template(name="popover_name")
     ul

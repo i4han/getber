@@ -37,16 +37,27 @@ Sat.init = ->
         Router.configure layoutTemplate: 'layout'
         startup = []
         router_map = {}
+        atRendered = []
         (x.keys Pages).map (name) -> (x.keys Pages[name]).map (key) ->  
-            if 'events' == key
-                Template[name].events x.func Pages[name].events
+            if 'atRendered' == key
+                obj = x.func Pages[name].atRendered
+                (x.keys obj).map (k) -> (x.keys obj[k]).map (l) ->
+                    if 'removeClass' == l  then atRendered.push -> $(k).removeClass obj[k][l]
+                    else if 'addClass' == l then atRendered.push -> $(k).addClass obj[k][l]
+                    else atRendered.push -> $(k).css l, x.value obj[k][l]
             else if 'router' == key 
                 router_map[name] = Pages[name].router
             else if 'startup' == key
                 startup.push Pages[name].startup
+            else if 'onRendered' == key
+                Template[name][key] -> 
+                    Pages[name][key]() 
+                    atRendered.map (f) -> f()
             else if key in 'eco navbar'.split ' ' # Config.templates.concat 
                 ''
-            else if key in 'helpers onRendered onCreated onDestroyed'.split ' '
+            else if key in 'events helpers'.split ' '
+                Template[name][key] x.func Pages[name][key]
+            else if key in 'onCreated onDestroyed'.split ' '
                 Template[name][key] Pages[name][key]
         Router.map ->
             this.route key, router_map[key] for key of router_map
@@ -58,17 +69,4 @@ if Meteor.isClient
         $.fn[k] = x.$[k] for k of x.$
 else if Meteor.isServer
     Meteor.startup -> Sat.init()
-
-###
-if (Meteor.isClient) {
-    $( function ($) { 
-        Settings.isClient || Sat.init();
-        for (key in x) {
-            $.fn[key] = x.$[key]
-        }
-    });
-} else if (Meteor.isServer) {
-    Meteor.startup(function() { Settings.isServer || Sat.init(); });
-}
-###
 

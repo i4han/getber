@@ -58,7 +58,7 @@ Pages.init = function() {
 };
 
 Sat.init = function() {
-  var methods, router_map, startup;
+  var atRendered, methods, router_map, startup;
   Pages.init();
   if (Meteor.isServer) {
     db.server();
@@ -85,17 +85,45 @@ Sat.init = function() {
     });
     startup = [];
     router_map = {};
+    atRendered = [];
     (x.keys(Pages)).map(function(name) {
       return (x.keys(Pages[name])).map(function(key) {
-        if ('events' === key) {
-          return Template[name].events(x.func(Pages[name].events));
+        var obj;
+        if ('atRendered' === key) {
+          obj = x.func(Pages[name].atRendered);
+          return (x.keys(obj)).map(function(k) {
+            return (x.keys(obj[k])).map(function(l) {
+              if ('removeClass' === l) {
+                return atRendered.push(function() {
+                  return $(k).removeClass(obj[k][l]);
+                });
+              } else if ('addClass' === l) {
+                return atRendered.push(function() {
+                  return $(k).addClass(obj[k][l]);
+                });
+              } else {
+                return atRendered.push(function() {
+                  return $(k).css(l, x.value(obj[k][l]));
+                });
+              }
+            });
+          });
         } else if ('router' === key) {
           return router_map[name] = Pages[name].router;
         } else if ('startup' === key) {
           return startup.push(Pages[name].startup);
+        } else if ('onRendered' === key) {
+          return Template[name][key](function() {
+            Pages[name][key]();
+            return atRendered.map(function(f) {
+              return f();
+            });
+          });
         } else if (__indexOf.call('eco navbar'.split(' '), key) >= 0) {
           return '';
-        } else if (__indexOf.call('helpers onRendered onCreated onDestroyed'.split(' '), key) >= 0) {
+        } else if (__indexOf.call('events helpers'.split(' '), key) >= 0) {
+          return Template[name][key](x.func(Pages[name][key]));
+        } else if (__indexOf.call('onCreated onDestroyed'.split(' '), key) >= 0) {
           return Template[name][key](Pages[name][key]);
         }
       });
@@ -131,17 +159,3 @@ if (Meteor.isClient) {
     return Sat.init();
   });
 }
-
-
-/*
-if (Meteor.isClient) {
-    $( function ($) { 
-        Settings.isClient || Sat.init();
-        for (key in x) {
-            $.fn[key] = x.$[key]
-        }
-    });
-} else if (Meteor.isServer) {
-    Meteor.startup(function() { Settings.isServer || Sat.init(); });
-}
- */
