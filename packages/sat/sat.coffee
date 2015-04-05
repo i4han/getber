@@ -39,20 +39,20 @@ Sat.init = ->
         router_map = {}
         atRendered = []
         (x.keys Pages).map (name) -> (x.keys Pages[name]).map (key) ->  
-            if 'atRendered' == key
+            if 'startup' == key
+                startup.push Pages[name].startup
+            else if 'atRendered' == key
                 obj = x.func Pages[name].atRendered
                 (x.keys obj).map (k) -> (x.keys obj[k]).map (l) ->
-                    if 'removeClass' == l  then atRendered.push -> $(k).removeClass obj[k][l]
+                    if   'removeClass' == l then atRendered.push -> $(k).removeClass obj[k][l]
                     else if 'addClass' == l then atRendered.push -> $(k).addClass obj[k][l]
                     else atRendered.push -> $(k).css l, x.value obj[k][l]
-            else if 'router' == key 
-                router_map[name] = Pages[name].router
-            else if 'startup' == key
-                startup.push Pages[name].startup
             else if 'onRendered' == key
                 Template[name][key] -> 
                     Pages[name][key]() 
                     atRendered.map (f) -> f()
+            else if 'router' == key 
+                router_map[name] = Pages[name].router
             else if key in 'eco navbar'.split ' ' # Config.templates.concat 
                 ''
             else if key in 'events helpers'.split ' '

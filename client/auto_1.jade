@@ -99,6 +99,10 @@ template(name="day")
     .day {{day}}
     .event {{event}}
 
+template(name="gmap")
+    input(id="pac-input", class="controls", type="text", placeholder="Enter a location")
+    #map-canvas
+
 template(name="request")
     #contentWrapper
         h1 Request

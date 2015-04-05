@@ -89,7 +89,9 @@ Sat.init = function() {
     (x.keys(Pages)).map(function(name) {
       return (x.keys(Pages[name])).map(function(key) {
         var obj;
-        if ('atRendered' === key) {
+        if ('startup' === key) {
+          return startup.push(Pages[name].startup);
+        } else if ('atRendered' === key) {
           obj = x.func(Pages[name].atRendered);
           return (x.keys(obj)).map(function(k) {
             return (x.keys(obj[k])).map(function(l) {
@@ -108,10 +110,6 @@ Sat.init = function() {
               }
             });
           });
-        } else if ('router' === key) {
-          return router_map[name] = Pages[name].router;
-        } else if ('startup' === key) {
-          return startup.push(Pages[name].startup);
         } else if ('onRendered' === key) {
           return Template[name][key](function() {
             Pages[name][key]();
@@ -119,6 +117,8 @@ Sat.init = function() {
               return f();
             });
           });
+        } else if ('router' === key) {
+          return router_map[name] = Pages[name].router;
         } else if (__indexOf.call('eco navbar'.split(' '), key) >= 0) {
           return '';
         } else if (__indexOf.call('events helpers'.split(' '), key) >= 0) {
