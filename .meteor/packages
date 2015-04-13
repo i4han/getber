@@ -17,4 +17,4 @@ oauth
 oauth2
 http
 mizzao:jquery-ui
-isaac:satellite
+isaac:satellite@0.1.35
